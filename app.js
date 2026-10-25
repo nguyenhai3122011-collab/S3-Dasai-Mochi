@@ -10,14 +10,14 @@ import { ESPLoader, Transport } from "./lib/esptool-bundle.js";
 // Danh mục các phiên bản Firmware Mochi S3 có sẵn
 const FIRMWARE_MANIFEST = [
   {
-    id: "mochi_xiao_64",
-    name: "Mochi S3 V1 cho XIAO ESP32-S3 (SSD1306 128x64)",
+    id: "S3-Mochi",
+    name: "Mochi Esp32 S3 Mini - V2",
     chipFamily: "ESP32-S3",
-    infoFile: "info/mochi-s3.txt",
+    infoFile: "info/mochi-s3-v2.txt",
     files: [
-      { name: "mochi-xiao-64.bootloader.bin", path: "firmware/mochi-xiao-64.bootloader.bin", offset: 0x0000, desc: "Bootloader" },
-      { name: "mochi-xiao-64.partitions.bin", path: "firmware/mochi-xiao-64.partitions.bin", offset: 0x8000, desc: "Partitions" },
-      { name: "mochi-xiao-64.bin", path: "firmware/mochi-xiao-64.bin", offset: 0x10000, desc: "Main Code" }
+      { name: "DasaiMochi_S3_v2.ino.bootloader.bin", path: "firmware/DasaiMochi_S3_v2.ino.bootloader.bin", offset: 0x0000, desc: "Bootloader" },
+      { name: "DasaiMochi_S3_v2.ino.partitions.bin", path: "firmware/DasaiMochi_S3_v2.ino.partitions.bin", offset: 0x8000, desc: "Partitions" },
+      { name: "DasaiMochi_S3_v2.ino4.bin", path: "firmware/DasaiMochi_S3_v2.ino.bin", offset: 0x10000, desc: "Main Code" }
     ]
   }
 ];
