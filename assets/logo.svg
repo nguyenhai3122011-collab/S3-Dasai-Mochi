@@ -1,33 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <defs>
-    <linearGradient id="mochiBody" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#ffa8cf"/>
-      <stop offset="55%" stop-color="#ff6fae"/>
-      <stop offset="100%" stop-color="#ef3b86"/>
-    </linearGradient>
-    <linearGradient id="mochiSheen" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity=".55"/>
-      <stop offset="60%" stop-color="#ffffff" stop-opacity="0"/>
-    </linearGradient>
-  </defs>
-
-  <!-- glow -->
-  <ellipse cx="32" cy="33" rx="26" ry="21" fill="#ff4f9a" opacity=".18"/>
-
-  <!-- mochi body -->
-  <path d="M8 34c0-11.6 10.7-21 24-21s24 9.4 24 21-10.7 21-24 21S8 45.6 8 34z" fill="url(#mochiBody)"/>
-  <path d="M8 34c0-11.6 10.7-21 24-21s24 9.4 24 21c0 2-.3 3.9-.8 5.7C50 30.6 38.4 21.5 26 22.9 19 23.7 12.6 27.7 9.2 33.5 8.5 33.7 8 33.9 8 34z" fill="url(#mochiSheen)"/>
-
-  <!-- eyes -->
-  <ellipse cx="24" cy="32" rx="6.4" ry="7.2" fill="#14141d"/>
-  <ellipse cx="41" cy="32" rx="6.4" ry="7.2" fill="#14141d"/>
-  <circle cx="26" cy="29.5" r="2.1" fill="#ffffff"/>
-  <circle cx="43" cy="29.5" r="2.1" fill="#ffffff"/>
-
-  <!-- blush -->
-  <ellipse cx="14.5" cy="38" rx="4" ry="2.4" fill="#ff3d84" opacity=".55"/>
-  <ellipse cx="50.5" cy="38" rx="4" ry="2.4" fill="#ff3d84" opacity=".55"/>
-
-  <!-- mouth -->
-  <path d="M27 43.5c1.6 2.4 8.4 2.4 10 0" stroke="#14141d" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Dasai Mochi — mặt mặc định</title>
+  <desc id="desc">Biểu cảm Chill Mochi trung tính với hai mắt trắng bo tròn và nụ cười nhẹ trên nền đen.</desc>
+  <rect x="8" y="8" width="496" height="496" rx="112" fill="#000000"/>
+  <g fill="#ffffff">
+    <!-- Mắt capsule theo tỉ lệ khuôn mặt mặc định -->
+    <rect x="74" y="175" width="116" height="137" rx="39"/>
+    <rect x="322" y="175" width="116" height="137" rx="39"/>
+  </g>
+  <!-- Nụ cười nhẹ của biểu cảm Chill Mochi -->
+  <path d="M226 333 Q256 355 286 333" fill="none" stroke="#ffffff" stroke-width="13" stroke-linecap="round"/>
 </svg>
