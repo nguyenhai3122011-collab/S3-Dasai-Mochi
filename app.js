@@ -13,7 +13,7 @@ const FIRMWARE_MANIFEST = [
     id: "S3-Mochi",
     name: "Mochi Esp32 S3 Mini - V5",
     chipFamily: "ESP32-S3",
-    infoFile: "info/mochi-s3-v2.txt",
+    infoFile: "info/mochi-s3-v5.txt",
     files: [
       { name: "DasaiMochi_S3_v5.ino.bootloader.bin", path: "firmware/DasaiMochi_S3_v5.ino.bootloader.bin", offset: 0x0000, desc: "Bootloader" },
       { name: "DasaiMochi_S3_v5.ino.partitions.bin", path: "firmware/DasaiMochi_S3_v5.ino.partitions.bin", offset: 0x8000, desc: "Partitions" },
