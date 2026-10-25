@@ -1,150 +1,127 @@
-# Dasai Mochi OS v5 — Màn hình biểu cảm thông minh dùng ESP32-S3
+# 🍡 MOCHI S3 — Dasai Mochi Robot cho ESP32-S3
 
-**Dasai Mochi OS v5** biến một bộ màn hình ST7789 và vi điều khiển ESP32-S3 thành một thiết bị mặt biểu cảm tương tác: hoạt ảnh được vẽ trực tiếp bằng code, đồng hồ và thời tiết trực tuyến, thư viện ảnh trên thẻ SD, trò chơi mini và giao diện Web Studio để tùy chỉnh.
-
-Firmware được cung cấp dưới dạng **file `.bin`** và có thể cài từ Web Flasher. Các biểu cảm được dựng theo thời gian thực — không cần tải sẵn bộ ảnh hoạt hình cho từng mood.
-
-## Tính năng nổi bật
-
-- **124 biểu cảm dựng bằng vector**: 24 biểu cảm gốc và 100 biểu cảm bổ sung. Có thể chọn biểu cảm bằng nút bấm, Web Studio hoặc để Mochi tự thay đổi; không cần ảnh animation dựng sẵn trên SD.
-- **Hoạt ảnh mục tiêu 60 FPS**: driver ST7789 riêng và framebuffer kép giúp cập nhật khuôn mặt mượt, hạn chế nhấp nháy; các game cũng chạy theo vòng lặp thời gian thực.
-- **Hai chế độ tự động**:
-  - **Normal**: mặt mặc định là chính; mặc định chờ ngẫu nhiên **5–10 giây**, hiện một mood ngẫu nhiên **3–5 giây**, rồi quay về mặt mặc định.
-  - **Slide Show**: phát các mood ngẫu nhiên nối tiếp, mặc định **5–10 giây mỗi mood**. Chuyển trực tiếp bằng hiệu ứng spring, không chèn mặt mặc định ở giữa.
-  - Các khoảng thời gian có thể chỉnh trong Cài Đặt hoặc Web Studio.
-- **Đồng hồ và thời tiết thực tế**: đồng bộ giờ qua NTP; lấy thời tiết từ WeatherAPI.com. Người dùng tự nhập API Key và vị trí, không dùng dữ liệu thời tiết giả định.
-- **Thiết lập Wi-Fi bằng 7 nút**: quét mạng 2.4 GHz và nhập mật khẩu ngay trên màn hình, không cần kết nối Web Studio trước.
-- **Web Studio**: điều khiển biểu cảm, vẽ mặt tùy chỉnh, cấu hình mode và thời gian, nhập Wi-Fi/API thời tiết, thay đổi độ sáng và xoay màn hình, cũng như gửi ảnh lên SD.
-- **Thư viện SD**: duyệt thư mục, xem ảnh và tệp văn bản; lưu hoặc nạp khuôn mặt đã tạo. Firmware tự tạo các thư mục `/images`, `/faces` và `/test` khi nhận thẻ.
-- **4 trò chơi mini**: Dash, Snake, Racer và Breakout.
-- **Giao diện Tiếng Việt UTF-8** có dấu; đèn nền màn hình có thể điều chỉnh.
-
-## Sơ đồ kết nối GPIO
-
-Bảng dưới đây áp dụng cho cấu hình Dasai Mochi S3 tương ứng. Màn hình và thẻ SD dùng các bus SPI riêng.
-
-### Màn hình IPS ST7789 240 × 240
-
-| Tín hiệu | GPIO ESP32-S3 | Ghi chú |
-|---|---:|---|
-| DC | GPIO 9 | Data/Command |
-| RST | GPIO 8 | Reset màn hình |
-| MOSI | GPIO 11 | Dữ liệu SPI màn hình |
-| SCLK | GPIO 12 | Xung SPI màn hình |
-| BL | GPIO 13 | Điều khiển độ sáng PWM |
-| CS | — | Màn hình của cấu hình này không có chân CS |
-
-### Thẻ nhớ SD — bus HSPI
-
-| Tín hiệu | GPIO ESP32-S3 |
-|---|---:|
-| CS | GPIO 10 |
-| MOSI | GPIO 4 |
-| MISO | GPIO 5 |
-| SCK | GPIO 6 |
-
-### Bảy nút bấm
-
-Mỗi nút nối giữa GPIO tương ứng và **GND**. Firmware dùng `INPUT_PULLUP`, vì vậy **nhấn = LOW**.
-
-| Nút | GPIO | Chức năng thường dùng |
-|---|---:|---|
-| UP | GPIO 42 | Di chuyển lên, đổi chủ đề màu |
-| DOWN | GPIO 45 | Di chuyển xuống |
-| LEFT | GPIO 46 | Chọn mood ngẫu nhiên / giảm giá trị |
-| RIGHT | GPIO 47 | Chọn mood ngẫu nhiên / tăng giá trị |
-| OK | GPIO 48 | Xác nhận, mở ứng dụng |
-| ACTION | GPIO 37 | Chọc Mochi; giữ để bật/tắt tự chạy |
-| BACK | GPIO 38 | Quay lại hoặc mở menu |
-
-**Lưu ý đấu nối:** dùng mức logic 3,3 V của ESP32-S3; không đưa 5 V trực tiếp vào GPIO. Không cần nối thêm ngoại vi vào các chân mở rộng D39, D3, D2, D1, RX hoặc TX để sử dụng firmware mặc định.
-
-## Cài firmware bằng Web Flasher
-
-Firmware v5 đã được xuất ra `.bin` và đăng lên Web Flasher. Cách cài tổng quát:
-
-1. Dùng máy tính và cáp USB **có truyền dữ liệu** để kết nối ESP32-S3. Đóng Serial Monitor hoặc ứng dụng khác đang chiếm cổng nối tiếp.
-2. Mở trang Web Flasher bằng trình duyệt có hỗ trợ Web Serial, chẳng hạn Chrome hoặc Edge trên máy tính.
-3. Nhấn **Connect/Kết nối**, chọn đúng cổng USB của bo mạch và cấp quyền truy cập khi trình duyệt hỏi.
-4. Chọn firmware Dasai Mochi OS v5 `.bin` đang được cung cấp trên trang, sau đó nhấn **Flash/Install/Cài đặt** và chờ quá trình hoàn tất.
-5. Khởi động lại bo mạch nếu trình nạp yêu cầu. Nếu trình duyệt không tìm thấy cổng, thử cáp USB dữ liệu khác hoặc đưa bo mạch vào chế độ nạp theo hướng dẫn của nhà sản xuất.
-
-Hãy dùng đúng tùy chọn nạp và thông số đã cấu hình trong Web Flasher; **không tự đổi địa chỉ flash/offset** nếu trang không yêu cầu. Nếu chọn xóa toàn bộ flash, cấu hình đã lưu như Wi-Fi, API Key và cài đặt Mochi có thể bị đặt lại.
-
-### Nếu tự biên dịch từ mã nguồn
-
-Trong Arduino IDE, chọn board **ESP32S3 Dev Module** và partition phù hợp với hướng dẫn build của dự án, ví dụ **Huge APP (3MB No OTA/1MB SPIFFS)**. Với cấu hình nút hiện tại, giữ **PSRAM Disabled** theo thiết lập của dự án vì GPIO 37 được dùng làm nút ACTION.
-
-## Thiết lập sau khi nạp
-
-### 1. Kết nối Wi-Fi bằng các nút trên bo mạch
-
-Mochi có thể phát điểm truy cập Wi-Fi để vào Web Studio:
-
-- **Tên mạng:** `DasaiMochi-S3`
-- **Mật khẩu mặc định:** `12345678`
-
-Có thể kết nối điện thoại/máy tính vào mạng này rồi mở địa chỉ Web Studio hiển thị trên màn hình; địa chỉ mặc định của điểm truy cập ESP32 thường là `http://192.168.4.1`. Hoặc dùng nút bấm để kết nối Mochi vào Wi-Fi nhà trước. Mạng nhà cần hỗ trợ **2.4 GHz**.
-
-Các bước nhập Wi-Fi trên màn hình:
-
-1. Từ mặt Mochi, nhấn **BACK (GPIO 38)** để mở menu chính.
-2. Nhấn **ACTION (GPIO 37)** để mở nhanh màn hình quét Wi-Fi; hoặc chọn **Cài Đặt → Kết nối WiFi**.
-3. Dùng **UP/DOWN** chọn mạng, nhấn **OK** để mở bàn phím ảo.
-4. Dùng các nút mũi tên để chọn ký tự, nhấn **OK** để nhập. **ACTION** xóa lùi; giữ **OK** khoảng 0,7 giây hoặc chọn nút **✓Nối** để kết nối.
-5. Khi kết nối thành công, ghi lại địa chỉ IP hiện trên màn hình. Truy cập `http://<địa-chỉ-IP>` từ thiết bị đang dùng cùng mạng Wi-Fi để mở Web Studio.
-
-Điểm truy cập Mochi và kết nối Wi-Fi nhà có thể hoạt động đồng thời. Nếu chỉ kết nối điện thoại vào điểm truy cập của Mochi mà bo mạch chưa vào được mạng Internet, Web Studio nội bộ vẫn dùng được nhưng dữ liệu thời tiết trực tuyến cần kết nối Internet.
-
-### 2. Cấu hình thời tiết
-
-1. Tạo hoặc đăng nhập tài khoản tại [WeatherAPI.com](https://www.weatherapi.com/) và sao chép API Key.
-2. Mở Web Studio → tab **API & Cài Đặt**.
-3. Dán API Key, sau đó nhập vị trí như `Hanoi`, `Ho Chi Minh`, `Da Nang`, hoặc giữ `auto:ip` để định vị theo kết nối Internet.
-4. Nhấn nút lưu/cập nhật thời tiết. Khi API Key, vị trí và Internet hợp lệ, thời tiết sẽ xuất hiện trên màn hình Đồng Hồ.
-
-### 3. Chọn mode và chỉnh thời gian biểu cảm
-
-Mở **Cài Đặt** từ menu. Danh sách có thể cuộn bằng UP/DOWN; dùng LEFT/RIGHT hoặc OK để thay đổi giá trị, rồi nhấn BACK để lưu.
-
-| Tùy chọn | Mặc định | Khoảng chỉnh |
-|---|---:|---:|
-| Normal — mặt mặc định nghỉ MIN/MAX | 5–10 giây | 3–10 giây |
-| Normal — mood MIN/MAX | 3–5 giây | 3–5 giây |
-| Slide Show — mood MIN/MAX | 5–10 giây | 5–10 giây |
-
-Trong mode Normal, Mochi quay về mặt mặc định sau mỗi mood. Trong Slide Show, các mood được phát liên tục và **không có biểu cảm mặc định xen giữa**. Có thể bật/tắt **Tự chạy** trong Cài Đặt hoặc giữ ACTION khi đang ở màn hình mặt Mochi.
-
-## Điều khiển nhanh
-
-| Ở màn hình mặt Mochi | Thao tác |
-|---|---|
-| UP / DOWN | Đổi chủ đề màu |
-| LEFT / RIGHT | Chọn mood ngẫu nhiên |
-| OK | Bật/tắt giờ và nhiệt độ góc màn hình |
-| Bấm nhanh ACTION | Chọc Mochi, tạo hiệu ứng và đổi mood |
-| Giữ ACTION | Bật/tắt tự chạy biểu cảm |
-| BACK | Mở menu chính |
-
-Từ menu chính, UP/DOWN chọn ứng dụng, OK mở ứng dụng và BACK quay lại. Trong thư viện SD, các nút dùng để duyệt thư mục/tệp, xem ảnh và chạy slideshow. Trong trò chơi, BACK thường đưa người dùng về sảnh game.
-
-## Thẻ SD, Web Studio và dữ liệu
-
-- Nên dùng thẻ SD tương thích với thư viện SD của Arduino, định dạng FAT32 nếu có thể.
-- Tệp khuôn mặt đã vẽ có thể được lưu thành `.mcha`; firmware có thể tự nạp `/faces/autoload.mcha` khi khởi động nếu tệp tồn tại.
-- Thư viện nhận các định dạng BMP, MCH, MCHA, TXT; khả năng xem JPG phụ thuộc vào việc bản build có thư viện `TJpg_Decoder`.
-- Web Studio mở trong trình duyệt nội bộ của mạng LAN/điểm truy cập, không cần cài ứng dụng riêng. Có thể chọn biểu cảm trong danh sách, tạo mặt vector/painted, gửi ảnh lên SD và chỉnh cài đặt hệ thống.
-- API Key, Wi-Fi và cài đặt mode được lưu trong bộ nhớ cấu hình của bo mạch; xóa toàn bộ flash có thể làm mất các giá trị này.
-
-## Xử lý nhanh khi gặp sự cố
-
-- **Không thấy cổng USB trên Web Flasher:** thử cáp có dữ liệu, cổng USB khác và đóng ứng dụng serial khác; kiểm tra trình duyệt có hỗ trợ Web Serial.
-- **Không vào được Web Studio:** đảm bảo điện thoại/máy tính và Mochi cùng mạng, dùng đúng IP đang hiển thị; hoặc kết nối trực tiếp SSID `DasaiMochi-S3`.
-- **Không kết nối Wi-Fi nhà:** kiểm tra mạng 2.4 GHz và mật khẩu; quét lại danh sách bằng ACTION.
-- **Không có thời tiết:** cần kết nối Internet, API Key hợp lệ và vị trí WeatherAPI nhận diện được.
-- **Không nhận thẻ SD:** kiểm tra thẻ, định dạng FAT32 và các chân CS/SCK/MISO/MOSI theo bảng; có thể dùng dòng quét/thử thẻ trong Cài Đặt.
-- **Màn hình sáng/tối hoặc màu chưa đúng:** điều chỉnh độ sáng, xoay màn hình hoặc kênh màu trong Cài Đặt/Web Studio.
+> Firmware **Mochi S3** là một robot mặt cảm xúc tự chạy cho board **ESP32-S3**, lấy cảm hứng từ
+> [Dasai Mochi](https://dasai.com.au/pages/mochi3) — màn hình OLED 128×64/128×32, 17 biểu cảm được
+> vẽ bằng thuật toán (không dùng ảnh bitmap), tự chớp mắt, tự nhìn quanh và tự đổi biểu cảm.
 
 ---
 
-*Dasai Mochi OS v5 là firmware dành cho cấu hình ESP32-S3, màn hình ST7789 240×240, thẻ SD HSPI và bộ 7 nút GPIO nêu trên. Khi lắp trên bo mạch khác, hãy đối chiếu sơ đồ chân trước khi cấp nguồn.*
+## ⚡ Tính năng
+
+- **17 biểu cảm** vẽ realtime: Idle, Happy, Love, Angry, Sad, Sleepy, Surprise, Thinking,
+  Dizzy, Wink, Laugh, Talking, Cool, Cry, Curious, Excited, Loading.
+- **Chớp mắt** tự nhiên + **nhìn quanh** khi rảnh rỗi (mắt di chuyển theo đường cong mượt).
+- **Tự động biểu cảm** (Auto mode): Mochi tự kể câu chuyện của nó, nghỉ ngơi rồi lại chào hỏi.
+- **Điều khiển bằng nút / cảm ứng**: short press đổi biểu cảm, long press bật/tắt Auto mode.
+- **Jingle** (nếu có loa piezo): mỗi biểu cảm có một nốt nhạc riêng.
+- **Không cần thư viện ngoài**: driver SSD1306/SH1106 tự viết, chỉ dùng `Wire` của Arduino.
+- **Siêu nhẹ**: firmware ~ 200 KB, chạy mượt ở 30 FPS trên ESP32-S3.
+
+---
+
+## 🔌 Cấu hình phần cứng
+
+| Thành phần | Giao tiếp | Ghi chú |
+| --- | --- | --- |
+| ESP32-S3 (XIAO / SuperMini / DevKitC-1) | — | Não của robot |
+| OLED SSD1306 128×64 hoặc 128×32 | I2C | Địa chỉ 0x3C (tự dò 0x3D) |
+| OLED SH1106 128×64 | I2C | Dùng bản riêng, offset cột +2 |
+| Nút nhấn (nếu có) | GPIO, kéo lên | Short = đổi mặt, Long = bật/tắt auto |
+| Cảm ứng điện dung (tuỳ chọn) | GPIO1–GPIO14 | Chạm để đổi biểu cảm |
+| Loa piezo (tuỳ chọn) | GPIO + tone() | Bật bằng `MOCHI_SOUND_ENABLE` |
+
+### Sơ đồ chân mặc định
+
+| Chức năng | GPIO | Ghi chú |
+| --- | --- | --- |
+| I2C SDA | 8 | Mặc định của ESP32-S3 & XIAO |
+| I2C SCL | 9 | Mặc định của ESP32-S3 & XIAO |
+| Nút nhấn | 0 | INPUT_PULLUP, xuống GND |
+| Cảm ứng | 1 | XIAO ESP32-S3 không có nút nhấn |
+| Loa | 6 | SuperMini / DevKitC-1 |
+
+---
+
+## 📦 Các bản phát hành trong web flasher
+
+| # | Phiên bản | Board | Màn hình | Flash |
+| --- | --- | --- | --- | --- |
+| 1 | Mochi S3 · XIAO ESP32-S3 · SSD1306 128×64 | XIAO ESP32-S3 | 128×64 | 8 MB |
+| 2 | Mochi S3 · XIAO ESP32-S3 · SSD1306 128×32 | XIAO ESP32-S3 | 128×32 | 8 MB |
+| 3 | Mochi S3 · SuperMini / DevKit · SSD1306 128×64 | SuperMini / DevKitC-1 | 128×64 | 4 MB |
+| 4 | Mochi S3 · SuperMini / DevKit · SSD1306 128×32 | SuperMini / DevKitC-1 | 128×32 | 4 MB |
+| 5 | Mochi S3 · SuperMini / DevKit · SH1106 128×64 | SuperMini / DevKitC-1 | 128×64 (SH1106) | 4 MB |
+| 6 | Mochi S3 · Chương trình trống | Mọi board S3 | — | 4 MB |
+
+> **Chọn sai kích thước màn hình?** Màn sẽ hiện méo hoặc trống — chỉ cần nạp lại đúng bản, không sao.
+
+---
+
+## 🔧 Cách nạp firmware
+
+1. **Cắm cáp USB-C** vào Mochi (nếu không thấy cổng COM: giữ nút `BOOT` rồi cắm lại cáp).
+2. Bấm **“Kết nối cổng COM”** và chọn đúng cổng serial.
+3. Chọn **phiên bản firmware** ở bước 2 (xem bảng phía trên).
+4. Bấm **“NẠP FIRMWARE MOCHI S3 (FLASH)”**, đợi tới 100%.
+5. Bấm **“Reset Chip”** → Mochi chớp mắt chào bạn. 👋
+
+### Nạp bằng `esptool.py` (không dùng trình duyệt)
+
+```bash
+esptool.py --chip esp32s3 --port /dev/ttyUSB0 --baud 921600 write_flash \
+  0x0    mochi-devkit-64.bootloader.bin \
+  0x8000 mochi-devkit-64.partitions.bin \
+  0x10000 mochi-devkit-64.bin
+```
+
+Hoặc dùng file **merged** (đã gộp sẵn bootloader + partition + app):
+
+```bash
+esptool.py --chip esp32s3 --port /dev/ttyUSB0 --baud 921600 \
+  write_flash 0x0 mochi-devkit-64-merged.bin
+```
+
+---
+
+## 🛠 Tự build lại firmware
+
+```bash
+cd firmware-src
+pio run -e mochi_devkit_64        # build cho SuperMini / DevKitC-1 128x64
+pio run -e mochi_xiao_64          # build cho XIAO ESP32-S3 128x64
+pio run                          # build tất cả
+```
+
+Tuỳ chỉnh trong `firmware-src/src/config.h`:
+
+```cpp
+#define MOCHI_SCREEN_W     128   // bề rộng màn hình
+#define MOCHI_SCREEN_H     64    // chiều cao màn hình (32 hoặc 64)
+#define MOCHI_OLED_OFFSET  0     // SH1106 = 2, SSD1306 = 0
+#define MOCHI_OLED_SDA     8     // chân I2C SDA
+#define MOCHI_OLED_SCL     9     // chân I2C SCL
+#define MOCHI_BUTTON_PIN   0     // -1 để tắt
+#define MOCHI_TOUCH_PIN    -1    // -1 để tắt
+#define MOCHI_BUZZER_PIN   -1    // -1 để tắt
+#define MOCHI_SOUND_ENABLE 0     // 1 để bật jingle
+```
+
+---
+
+## 🎮 Điều khiển
+
+| Hành động | Kết quả |
+| --- | --- |
+| Short press nút / chạm cảm ứng | Mochi đổi biểu cảm ngẫu nhiên |
+| Long press nút (giữ 1.2 s) | Bật ⇄ tắt chế độ tự biểu cảm |
+| Xem nhật ký | Mở Serial Monitor ở **115200 bps** |
+
+---
+
+## 🙏 Credits
+
+- **Dasai Mochi** — thiết kế robot gốc: [dasai.com.au](https://dasai.com.au)
+- **ESPX Web Flasher** — bố cục & luồng nạp firmware của trang tham chiếu
+- **esptool-js** — bộ nạp flash chạy trong trình duyệt
+- Các dự án mở nguồn đã tham khảo ý tưởng: `upiir/esp32s3_oled_dasai_mochi`,
+  `dzonder/mochi-esp32`, `Huy Vector – Build Your Own Dasai Mochi Robot`

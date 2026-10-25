@@ -3,23 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MOCHI S3 WEB FLASHER | Nạp Firmware Dasai Mochi Robot – ESP32-S3</title>
-  <meta name="description" content="Trình nạp firmware trực tuyến cho robot Dasai Mochi chạy ESP32-S3. Kết nối USB, nạp 3 file .bin, xong là Mochi sống.">
-  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <title>MOCHI S3 Online Web Flasher | Trình Nạp Firmware Dasai Mochi Robot – ESP32-S3</title>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- ================= HEADER ================= -->
+  <!-- Header / Navigation Bar -->
   <header class="app-header">
     <div class="header-left">
       <div class="brand-logo-wrapper">
-        <img src="assets/logo.svg" alt="Mochi S3 Logo" class="brand-logo">
+        <img src="assets/logo.svg" alt="MOCHI S3 Logo" class="brand-logo" id="brandLogo">
         <div class="brand-text">
-          <div class="brand-title">MOCHI S3 <span class="badge-tag">WEB FLASHER</span></div>
-          <div class="brand-sub">Dasai Mochi Robot · ESP32-S3 Online Firmware Programmer</div>
+          <div class="brand-title">MOCHI S3 <span class="badge-tag">ONLINE FLASHER</span></div>
+          <div class="brand-sub">Dasai Mochi Robot · ESP32-S3 WebSerial Firmware Programmer</div>
         </div>
       </div>
     </div>
@@ -28,58 +27,47 @@
         <span class="status-dot"></span>
         <span class="status-text" id="statusLabel">Chưa kết nối cổng COM</span>
       </div>
-      <a href="#" id="ghLink" target="_blank" rel="noopener noreferrer" class="gh-btn" title="Mã nguồn">
+      <a href="#" target="_blank" rel="noopener noreferrer" class="gh-btn" title="Xem trên GitHub">
         <svg height="18" viewBox="0 0 16 16" width="18" fill="currentColor">
           <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
         </svg>
-        <span>Source</span>
+        <span>GitHub Repository</span>
       </a>
     </div>
   </header>
 
-  <!-- ================= WARNING ================= -->
+  <!-- Web Serial Browser Warning (nếu trình duyệt không hỗ trợ) -->
   <div id="unsupportedWarning" class="banner-alert hidden">
-    ⚠️ <strong>Trình duyệt không hỗ trợ Web Serial API:</strong> Vui lòng dùng <strong>Google Chrome</strong>, <strong>Microsoft Edge</strong> hoặc <strong>Opera</strong> (máy tính / Android) để nạp firmware trực tiếp qua cáp USB-C.
+    ⚠️ <strong>Trình duyệt không hỗ trợ Web Serial API:</strong> Vui lòng dùng <strong>Google Chrome</strong>, <strong>Microsoft Edge</strong>, hoặc <strong>Opera</strong> (máy tính hoặc Android) để có thể giao tiếp trực tiếp với vi điều khiển ESP32-S3 qua cáp USB.
   </div>
 
-  <!-- ================= MAIN ================= -->
+  <!-- Main Container Layout: 2 Columns -->
   <main class="main-layout">
-
-    <!-- ---------- LEFT COLUMN ---------- -->
+    <!-- Cột trái: Bảng điều khiển nạp Firmware Mochi S3 -->
     <section class="control-panel">
-
-      <!-- STEP 1 -->
+      <!-- Card: Cấu hình cổng kết nối -->
       <div class="panel-card">
         <div class="card-header">
           <div class="card-title">
             <span class="step-num">1</span>
-            <h3>Kết nối ESP32-S3 của Mochi</h3>
+            <h3>Kết nối thiết bị ESP32-S3</h3>
           </div>
           <span class="chip-detected-badge" id="chipDetectedBadge">Chưa nhận diện</span>
         </div>
         <div class="card-body">
-          <div class="hint-strip">
-            <span class="hint-ico">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                <path d="M9 2v6M15 2v6"/><path d="M6 8h12v3a6 6 0 0 1-12 0V8z"/><path d="M12 17v5"/>
-              </svg>
-            </span>
-            <div><strong>Cắm USB-C</strong> vào Mochi. Nếu không kết nối được, giữ nút <code>BOOT</code> rồi cắm lại cáp để vào chế độ download.</div>
-          </div>
-
           <div class="form-grid">
             <div class="form-group">
               <label for="baudRateSelect">Tốc độ nạp (Baudrate)</label>
               <select id="baudRateSelect" class="custom-select">
-                <option value="921600" selected>921600 bps (Khuyến nghị – siêu nhanh)</option>
+                <option value="921600" selected>921600 bps (Khuyến nghị - Siêu nhanh)</option>
                 <option value="460800">460800 bps (Nhanh)</option>
+                <option value="115200">115200 bps (Tiêu chuẩn / Ổn định)</option>
                 <option value="230400">230400 bps</option>
-                <option value="115200">115200 bps (Tiêu chuẩn / ổn định)</option>
               </select>
             </div>
             <div class="form-group">
               <label for="eraseFlashCheckbox" class="checkbox-label">
-                <input type="checkbox" id="eraseFlashCheckbox" checked>
+                <input type="checkbox" id="eraseFlashCheckbox">
                 <span>Xoá sạch toàn bộ Flash trước khi nạp (Full Chip Erase)</span>
               </label>
             </div>
@@ -97,39 +85,41 @@
             </button>
           </div>
 
+          <!-- Thông tin chip khi kết nối thành công -->
           <div id="deviceDetails" class="device-details-box hidden">
             <div class="detail-item"><span class="k">Dòng Chip:</span> <strong id="valChipName" class="v">-</strong></div>
             <div class="detail-item"><span class="k">Địa chỉ MAC:</span> <code id="valChipMac" class="v">-</code></div>
             <div class="detail-item"><span class="k">Tính năng:</span> <span id="valChipFeatures" class="v">-</span></div>
             <div class="detail-item"><span class="k">Thạch anh:</span> <span id="valChipCrystal" class="v">-</span></div>
           </div>
-          <div id="chipWarn" class="chip-warn hidden"></div>
         </div>
       </div>
 
-      <!-- STEP 2 -->
+      <!-- Card: Chọn phiên bản Firmware & Phân vùng nạp -->
       <div class="panel-card">
         <div class="card-header">
           <div class="card-title">
             <span class="step-num">2</span>
-            <h3>Chọn bản firmware Mochi S3</h3>
+            <h3>Chọn phiên bản Firmware Mochi S3</h3>
           </div>
           <span class="badge-mode" id="modeBadge">Preset Cloud</span>
         </div>
         <div class="card-body">
           <div class="form-group">
             <label for="versionSelect">Danh sách bản phát hành (Release Version)</label>
-            <select id="versionSelect" class="custom-select"></select>
+            <select id="versionSelect" class="custom-select">
+              <!-- Sẽ load từ JSON hoặc mảng dữ liệu -->
+            </select>
           </div>
-          <p class="preset-desc" id="presetDesc"></p>
 
+          <!-- Tab chuyển đổi giữa Nạp tự động (theo phiên bản) và Nạp tùy chỉnh (custom file) -->
           <div class="tab-header">
             <button class="tab-btn active" data-tab="presetTab">3 File chuẩn (Bootloader + Partition + Main)</button>
             <button class="tab-btn" data-tab="customTab">Tải file .bin từ máy tính</button>
           </div>
 
           <div id="presetTab" class="tab-content active">
-            <p class="tab-desc">Hệ thống tự động tải 3 phân vùng chuẩn của phiên bản được chọn:</p>
+            <p class="tab-desc">Hệ thống tự động tải 3 phân vùng chuẩn của phiên bản được chọn từ GitHub/Server:</p>
             <div class="binary-rows">
               <div class="bin-row">
                 <div class="bin-tag">Bootloader</div>
@@ -146,14 +136,14 @@
               <div class="bin-row highlight-main">
                 <div class="bin-tag">Main App</div>
                 <div class="bin-offset"><code id="presetAppOffset">0x10000</code></div>
-                <div class="bin-filename" id="presetAppFile">mochi.bin</div>
+                <div class="bin-filename" id="presetAppFile">mochi_s3.bin</div>
                 <div class="bin-status"><span class="pill pill-ready">Sẵn sàng</span></div>
               </div>
             </div>
           </div>
 
           <div id="customTab" class="tab-content">
-            <p class="tab-desc">Hoặc tự chọn file <code>.bin</code> từ máy tính (ví dụ firmware Mochi của bạn):</p>
+            <p class="tab-desc">Hoặc bạn có thể tự chọn các file <code>.bin</code> từ máy tính cá nhân để nạp:</p>
             <div class="custom-file-inputs">
               <div class="custom-bin-item">
                 <div class="custom-header">
@@ -179,6 +169,7 @@
             </div>
           </div>
 
+          <!-- Nút hành động chính Flash Firmware -->
           <div class="flash-action-area">
             <div class="progress-container hidden" id="flashProgressContainer">
               <div class="progress-bar-wrap">
@@ -198,31 +189,14 @@
                 <span>NẠP FIRMWARE MOCHI S3 (FLASH)</span>
               </button>
               <button id="btnResetBoard" class="btn btn-outline" disabled title="Khởi động lại bo mạch sau khi nạp">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/>
-                </svg>
-                <span>Reset Chip</span>
+                🔄 Reset Chip
               </button>
-            </div>
-
-            <div id="flashSuccess" class="flash-success hidden">
-              <div class="fs-title">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M20 6L9 17l-5-5"/>
-                </svg>
-                Nạp thành công!
-              </div>
-              <ol class="fs-steps">
-                <li>Nhấn <strong>Reset Chip</strong> hoặc rút/cắm lại cáp USB để Mochi chạy firmware mới.</li>
-                <li>Mở Serial Monitor ở <strong>115200 bps</strong> để xem nhật ký khởi động.</li>
-                <li><strong>Short press nút</strong> → đổi biểu cảm · <strong>Long press</strong> → bật/tắt chế độ tự động.</li>
-              </ol>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- STEP 3 -->
+      <!-- Card: Console / Terminal Output -->
       <div class="panel-card console-card">
         <div class="card-header">
           <div class="card-title">
@@ -235,41 +209,14 @@
         </div>
         <div class="card-body console-body">
           <div id="serialConsole" class="terminal-screen">
-            <div class="term-line info-text">[MOCHI S3 Web Flasher] Hệ thống đã sẵn sàng. Cắm cáp USB-C vào Mochi rồi bấm "Kết nối cổng COM".</div>
+            <div class="term-line info-text">[MOCHI S3 Web Flasher] Hệ thống đã sẵn sàng. Hãy kết nối cáp USB với ESP32-S3 và chọn "Kết nối cổng COM".</div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ---------- RIGHT COLUMN ---------- -->
-    <section class="side-panel">
-
-      <!-- LIVE PREVIEW -->
-      <div class="panel-card preview-card">
-        <div class="card-header">
-          <div class="card-title">
-            <span class="step-num pink">◕</span>
-            <h3>Mochi Live Preview</h3>
-          </div>
-          <span class="badge-mode" id="previewExprName">Idle</span>
-        </div>
-        <div class="card-body">
-          <div class="screen-wrap">
-            <div class="oled-frame">
-              <canvas id="mochiCanvas" width="256" height="128"></canvas>
-              <div class="oled-glare"></div>
-            </div>
-            <div class="screen-meta">
-              <span class="meta-chip">SSD1306 128×64</span>
-              <span class="meta-chip">30 FPS</span>
-              <span class="meta-chip" id="previewFps">– fps</span>
-            </div>
-          </div>
-          <div class="expr-grid" id="exprGrid"></div>
-        </div>
-      </div>
-
-      <!-- DOCS -->
+    <!-- Cột phải: Hiển thị file .txt trong thư mục /info (Render Markdown GitHub style) -->
+    <section class="readme-panel">
       <div class="panel-card github-readme-card">
         <div class="github-card-header">
           <div class="file-path-badge">
@@ -283,46 +230,28 @@
             <a id="btnDownloadTxt" href="#" class="btn-text-action" download>Tải file .txt</a>
           </div>
         </div>
+
         <div class="github-readme-body">
+          <!-- Markdown view -->
           <article id="readmeContent" class="markdown-body">
             <div class="loading-spinner">Đang tải thông tin bản phát hành...</div>
           </article>
         </div>
       </div>
-
-      <!-- DOWNLOADS -->
-      <div class="panel-card">
-        <div class="card-header">
-          <div class="card-title">
-            <span class="step-num pink">↓</span>
-            <h3>Tải firmware .bin</h3>
-          </div>
-        </div>
-        <div class="card-body">
-          <div id="downloadList" class="download-list"></div>
-          <p class="tiny-note">Dùng cho Arduino IDE / esptool.py / ESPHome. File <code>merged</code> đã gộp sẵn bootloader + partition + app, nạp ở offset <code>0x0</code>.</p>
-        </div>
-      </div>
     </section>
   </main>
 
-  <!-- ================= FOOTER ================= -->
+  <!-- Footer -->
   <footer class="app-footer">
     <div class="footer-left">
-      <span>
-        <svg width="15" height="15" viewBox="0 0 64 64" aria-hidden="true">
-          <path d="M8 34c0-11.6 10.7-21 24-21s24 9.4 24 21-10.7 21-24 21S8 45.6 8 34z" fill="#ff4f9a"/>
-          <ellipse cx="24" cy="32" rx="6.4" ry="7.2" fill="#14141d"/>
-          <ellipse cx="41" cy="32" rx="6.4" ry="7.2" fill="#14141d"/>
-        </svg>
-        MOCHI S3 — Dasai Mochi Robot cho ESP32-S3
-      </span>
+      <span>⚡ MOCHI S3 Firmware Web Tool - Dasai Mochi Robot (ESP32-S3)</span>
     </div>
     <div class="footer-right">
-      <span>Dựa trên Web Serial API &amp; esptool-js</span>
+      <span>Dựa trên Web Serial API & ESPTool-JS</span>
     </div>
   </footer>
 
+  <!-- Scripts -->
   <script src="lib/crypto-js.min.js"></script>
   <script type="module" src="app.js"></script>
 </body>
