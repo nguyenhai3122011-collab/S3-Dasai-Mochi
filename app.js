@@ -11,13 +11,13 @@ import { ESPLoader, Transport } from "./lib/esptool-bundle.js";
 const FIRMWARE_MANIFEST = [
   {
     id: "S3-Mochi",
-    name: "Mochi Esp32 S3 Mini - V2",
+    name: "Mochi Esp32 S3 Mini - V5",
     chipFamily: "ESP32-S3",
     infoFile: "info/mochi-s3-v2.txt",
     files: [
-      { name: "DasaiMochi_S3_v2.ino.bootloader.bin", path: "firmware/DasaiMochi_S3_v2.ino.bootloader.bin", offset: 0x0000, desc: "Bootloader" },
-      { name: "DasaiMochi_S3_v2.ino.partitions.bin", path: "firmware/DasaiMochi_S3_v2.ino.partitions.bin", offset: 0x8000, desc: "Partitions" },
-      { name: "DasaiMochi_S3_v2.ino4.bin", path: "firmware/DasaiMochi_S3_v2.ino.bin", offset: 0x10000, desc: "Main Code" }
+      { name: "DasaiMochi_S3_v5.ino.bootloader.bin", path: "firmware/DasaiMochi_S3_v5.ino.bootloader.bin", offset: 0x0000, desc: "Bootloader" },
+      { name: "DasaiMochi_S3_v5.ino.partitions.bin", path: "firmware/DasaiMochi_S3_v5.ino.partitions.bin", offset: 0x8000, desc: "Partitions" },
+      { name: "DasaiMochi_S3_v5.ino4.bin", path: "firmware/DasaiMochi_S3_v5.ino.bin", offset: 0x10000, desc: "Main Code" }
     ]
   }
 ];
