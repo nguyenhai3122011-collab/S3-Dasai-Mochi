@@ -7,7 +7,7 @@ Firmware được cung cấp dưới dạng **file `.bin`** và có thể cài t
 ## Tính năng nổi bật
 
 - **124 biểu cảm dựng bằng vector**: 24 biểu cảm gốc và 100 biểu cảm bổ sung. Có thể chọn biểu cảm bằng nút bấm, Web Studio hoặc để Mochi tự thay đổi; không cần ảnh animation dựng sẵn trên SD.
-- **Hoạt ảnh mục tiêu 60 FPS**: driver ST7789 riêng và framebuffer kép giúp cập nhật khuôn mặt mượt, hạn chế nhấp nháy; các game cũng chạy theo vòng lặp thời gian thực.
+- **Hoạt ảnh mục tiêu 30 FPS**: driver ST7789 riêng và framebuffer kép giúp cập nhật khuôn mặt mượt, hạn chế nhấp nháy; các game cũng chạy theo vòng lặp thời gian thực.
 - **Hai chế độ tự động**:
   - **Normal**: mặt mặc định là chính; mặc định chờ ngẫu nhiên **5–10 giây**, hiện một mood ngẫu nhiên **3–5 giây**, rồi quay về mặt mặc định.
   - **Slide Show**: phát các mood ngẫu nhiên nối tiếp, mặc định **5–10 giây mỗi mood**. Chuyển trực tiếp bằng hiệu ứng spring, không chèn mặt mặc định ở giữa.
